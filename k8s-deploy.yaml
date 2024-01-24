@@ -30,11 +30,6 @@ spec:
       - name: hyperf
         image: $REGISTRY/$DOCKERHUB_USERNAME/$APP_NAME
         imagePullPolicy: IfNotPresent
-        readinessProbe:
-          periodSeconds: 5
-          httpGet:
-            path: /heartbeat 
-            port: 9501
         ports:
         - containerPort: 9501
         resources:
