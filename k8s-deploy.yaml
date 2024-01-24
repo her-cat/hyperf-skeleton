@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: hyperf-svc
+  namespace: hyperf
+spec:
+  ports:
+  - name: web
+    port: 9501
+  selector:
+    app: hyperf
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: hyperf
+  namespace: hyperf
+spec:
+  serviceName: hyperf-svc
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hyperf
+  template:
+    metadata:
+      labels:
+        app: hyperf
+    spec:
+      containers:
+      - name: hyperf
+        image: $REGISTRY/$DOCKERHUB_USERNAME/$APP_NAME
+        imagePullPolicy: IfNotPresent
+        readinessProbe:
+          periodSeconds: 5
+          httpGet:
+            path: /heartbeat 
+            port: 9501
+        ports:
+        - containerPort: 9501
+        resources:
+          requests:
+            memory: 1Gi
+          limits:
+            memory: 2Gi
